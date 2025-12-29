@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html lang="fa">
+<head>  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مجموعه پاتوق موبایل حاتمی | محاسبه‌گر اقساط </title>
+
+  <!-- Vazir Font -->
+  <link
+    href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
+  <style>
+    * { font-family: Vazir, sans-serif; }
+    body { margin: 0; direction: rtl; padding: 24px; background: #f5f6f8; }
+    .card { max-width: 560px; margin: auto; background: #fff; border-radius: 22px; padding: 28px; box-shadow: rgba(0, 0, 0, 0.2) 0px 18px 50px -10px; }
+    h1 { margin: 0; font-size: 22px; text-align: center; }
+    h2 { margin: 8px 0 26px; font-size: 15px; text-align: center; color: #444; }
+    label { display: block; margin-top: 18px; font-weight: bold; font-size: 14px; }
+    select, input { width: 100%; margin-top: 8px; padding: 14px; font-size: 14px; border-radius: 14px; border: 1px solid #ccc; }
+    button { width: 100%; margin-top: 28px; padding: 16px; font-size: 16px; border: none; border-radius: 16px; background: #0e1621; color: #fff; cursor: pointer; }
+    .info, .warn { margin-top: 8px; font-size: 13px; font-weight: 700; color: #b00020; line-height: 1.8; }
+    .result, .docs { margin-top: 22px; padding: 18px; border-radius: 16px; background: #f2f4f6; font-size: 14px; line-height: 2; }
+    .docs { border: 1px dashed #ccc; margin-top: 10px; }
+    .titleDocs { font-weight: bold; font-size: 18px; margin-bottom: 6px; }
+    .greenRank { color: green; font-weight: bold; }
+    .blueLink { color: blue; font-weight: 600; text-decoration: none; }
+    .header { background-color: #0e1621; color: #fff; border-radius: 10px; padding: 8px; font-size: 25px; }
+    .headerH2 { font-size: 20px; }
+    .social-icons { font-size: 32px; padding: 5px 5px; margin-top: 20px; }
+    .whatsapp { color: #25d366; }
+    .instagram { color: #e1306c; }
+    .social-icons i { cursor: pointer; transition: transform 0.2s ease; }
+    .social-icons i:hover { transform: scale(1.15); }
+    .IconText { font-size: 14px; text-align: center; color: #0e1621; }
+    .containerIcons { display: flex; width: 100%; gap: 20px; direction: ltr; align-items: center; justify-content: center; margin-top: 5px; }
+    .iconContainer { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .linkText { font-size: 14px; text-align: center; font-weight: 600; color: #0e162189; text-decoration: none; }
+    .linkText:hover { font-weight: 700; }
+    @media(max-width: 400px){ body { padding: 12px; } .card { padding: 16px; } button { padding: 12px; font-size: 14px; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 class="header">مجموعه پاتوق موبایل حاتمی</h1>
+    <h2 class="headerH2">محاسبه‌گر اقساط</h2>
+
+    <label for="type">انتخاب نوع متقاضی</label>
+    <select id="type" onchange="resetAll();showInfo();showSpecialDocs()">
+      <option value="">انتخاب کنید</option>
+      <option value="edu">بازنشستگان آموزش و پرورش و حقوق‌بگیران بانک صادرات</option>
+      <option value="hekmat">حکمت کارت (نیروهای مسلح)</option>
+      <option value="refah"> تأمین اجتماعی (بانک رفاه  حقوق بگیران و بازشتگان)</option>
+      <option value="sayad">چک صیاد (دارای بیمه دولتی)</option>
+      <option value="Avand">آوند کارت</option>
+      <option value="manisa">مانیسا</option>
+      <option value="bajet">باجت</option>
+      <option value="aghsatMarket">اقساط مارکت پاتوق موبایل</option>
+    </select>
+
+    <div class="info" id="typeInfo"></div>
+
+    <!-- مبلغ و تعداد اقساط و دکمه محاسبه -->
+    <div id="calcSection">
+      <label for="amount">مبلغ درخواستی برای اقساط (تومان)</label>
+      <span class="warn" id="fixedWarn">توجه: بین ۵ تا ۱۰ درصد از مبلغ اولیه اقساط بابت سهم تامین کننده و مالیات کسر می‌شود.</span>
+      <input type="text" id="amount" placeholder="مثلاً... 20,000,000 تومان" oninput="formatNumber(this)" />
+      <div class="warn" id="limitWarn" style="display:none;"></div>
+
+      <label for="months">تعداد اقساط</label>
+      <select id="months" onchange="resetResult()">
+        <option value="">انتخاب کنید</option>
+        <option value="12">۱۲ ماه</option>
+        <option value="18">۱۸ ماه</option>
+        <option value="24">۲۴ ماه</option>
+      </select>
+
+      <button id="calcBtn" onclick="calculate()">محاسبه</button>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="docs" id="docs"></div>
+
+    <div class="social-icons">
+      <p class="IconText">راه ارتباطی برای مشاوره و ارسال مدارک</p>
+      <div class="containerIcons">
+        <div class="iconContainer">
+          <a href="https://wa.me/09931696806" target="_blank">
+            <i class="fa-brands fa-whatsapp whatsapp"></i>
+          </a>
+          <a class="linkText" href="https://wa.me/09160183766" target="_blank" style="color:#25d366;">0993 169 6806</a>
+        </div>
+        <div class="iconContainer">
+          <i class="fa-brands fa-instagram instagram"></i>
+          <a class="linkText" href="https://instagram.com/Patogh_mobile" target="_blank" style="color:#8a3ab9;">Patogh_mobile</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const LIMITS = { refah: 150000000, edu: 100000000 , sayad: 70000000, Avand: 100000000};
+const type = document.getElementById("type");
+const amount = document.getElementById("amount");
+const months = document.getElementById("months");
+const result = document.getElementById("result");
+const docs = document.getElementById("docs");
+const limitWarn = document.getElementById("limitWarn");
+const fixedWarn = document.getElementById("fixedWarn");
+const typeInfo = document.getElementById("typeInfo");
+const calcBtn = document.getElementById("calcBtn");
+const calcSection = document.getElementById("calcSection");
+
+function toEnglishDigits(str){ const persian="۰۱۲۳۴۵۶۷۸۹"; return str.replace(/[۰-۹]/g,d=>persian.indexOf(d)); }
+
+function formatNumber(input){
+  let val=toEnglishDigits(input.value).replace(/,/g,"").replace(/\D/g,"");
+  let num=Number(val);
+  limitWarn.style.display="none";
+
+  if(type.value && LIMITS[type.value] && num>LIMITS[type.value]){
+    num=LIMITS[type.value];
+    limitWarn.innerHTML="سقف مجاز این ارگان "+num.toLocaleString()+" تومان می‌باشد";
+    limitWarn.style.display="block";
+  }
+
+  input.value=num?num.toLocaleString():"";
+
+  if(type.value === "hekmat") {
+      if(num > 70000000){
+          months.value = "24";
+          months.disabled = true;
+      } else {
+          months.disabled = false;
+      }
+  }
+
+  resetResult();
+}
+
+function showSpecialDocs(){
+  const t = type.value;
+
+  // اگر مانیسا یا باجت انتخاب شد، کل بخش محاسبه حذف شود
+  if(t === "bajet" || t === "manisa"){
+    calcSection.style.display = "none";
+
+    if(t === "bajet"){
+      docs.innerHTML = `<div class="titleDocs">شرایط اقساط</div>
+      مبلغ اقساط 125,000,000<br>
+    تومان خالص واریزی مبلغ اقساط با کسر مالیات و سهم تامین کننده شرکت: 111,500,000<br>
+      تعداد اقساط: 24 ماه<br>
+     مبلغ قسط هرماه:9,250,000 تومان <br>
+     تومان جمع مبلغ کل اقساط:  230,000,000
+      <div class="titleDocs">شرایط لازم برای دریافت</div>
+      • چک صیادی معتبر دارای رتبه اعتباری <span class="greenRank">A</span> یا <span class="greenRank">B</span> یا <span class="greenRank">C</span><br>
+      • چک ضمانت شخص دیگر دارای رتبه اعتباری حداقلc <br>
+      • لینک اعتبار سنجی رتبه اعتباری(فیلتر شکن خاموش): <a class="blueLink" href="https://etebaritoapp.nics24.ir/login" target="_blank">https://etebaritoapp.nics24.ir/login</a>`;
+    } else {
+      docs.innerHTML = `<div class="titleDocs">شرایط اقساط</div>
+      مبلغ اقساط: 100,000,000 تومان<br>
+      خالص واریزی مبلغ اقساط با کسر مالیات و کارمزد تامین کننده شرکت: 90,000,000 تومان<br>
+      تعداد اقساط: 24 ماه<br>
+      مبلغ قسط هرماه: 7,500,000 تومان<br>
+      جمع مبلغ کل اقساط: 180,000,000 تومان
+      <div class="titleDocs">شرایط لازم برای دریافت</div>
+      • چک صیادی معتبر دارای رتبه اعتباری <span class="greenRank">A</span> یا <span class="greenRank">B</span> یا <span class="greenRank">C</span><br>
+      • چک ضمانت شخص دیگر دارای رتبه اعتباری حداقل c<br>
+      • لینک اعتبار سنجی رتبه اعتباری(فیلتر شکن خاموش): <a class="blueLink" href="https://etebaritoapp.nics24.ir/login" target="_blank">https://etebaritoapp.nics24.ir/login</a>`;
+    }
+  } else {
+    // برای بقیه حالت‌ها نمایش بخش محاسبه
+    calcSection.style.display = "block";
+    fixedWarn.innerHTML="توجه: بین ۵ تا ۱۰ درصد از مبلغ اولیه اقساط سهم تامین کننده و مالیات کسر می‌شود";
+    amount.disabled = false;
+    months.disabled = false;
+    calcBtn.style.display = "block";
+    docs.innerHTML = "";
+  }
+}
+
+function resetAll(){
+  amount.value=""; months.value=""; limitWarn.style.display="none"; typeInfo.innerHTML=""; result.innerHTML=""; docs.innerHTML="";
+  [...months.options].forEach(o=>o.disabled=false); amount.disabled=false; months.disabled=false;
+  calcBtn.style.display = "block";
+  calcSection.style.display = "block";
+  fixedWarn.innerHTML="توجه: بین ۵ تا ۱۰ درصد از مبلغ اولیه اقساط بابت سهم تامیین کننده و مالیات کسر می‌شود";
+}
+
+function resetResult(){ result.innerHTML=""; }
+
+function showInfo(){
+  let txt="";
+  switch(type.value){
+    case "refah": txt="سقف مبلغ بانک رفاه ۱۵۰ میلیون تومان می‌باشد."; break;
+    case "edu": txt="سقف مبلغ ۱۰۰ میلیون تومان می‌باشد."; break;
+    case "hekmat": txt="برای مبالغ بالای ۷۰ میلیون تومان، فقط اقساط ۲۴ ماهه .سقف اقساط 200 ملیون تومان فعال است."; break;
+    case "sayad": txt="ویژه چک صیاد با بیمه دولتی.سقف مجاز 70 میلیون تومان."; break;
+case "Avand": txt="سقف اعتبار آوند کارت شما با ارسال مدارک به شماره آخر صفحه در واتساپ."; break;
+  }
+  typeInfo.innerHTML=txt;
+}
+
+// بخش محاسبه برای سایر نوع‌ها
+function calculate(){
+  const t=type.value;
+  const a=Number(amount.value.replace(/,/g,""));
+  const m=Number(months.value);
+
+  if(!t || !a || !m){ result.innerHTML="لطفاً تمام گزینه‌ها را تکمیل کنید."; return; }
+
+  let total=0;
+  if(m===12) total=a*1.468;
+  else if(m===18) total=a*1.62118;
+  else if(m===24) total=a*1.78768;
+
+  const each=Math.round(total/m);
+  result.innerHTML=
+  "مبلغ هر قسط: <b>"+each.toLocaleString()+" تومان</b><br>"+
+  "مبلغ کل اقساط: <b>"+Math.round(total).toLocaleString()+" تومان</b>";
+
+  result.innerHTML += `
+<br>
+<div style="color:#1e6bd6; text-align:center; font-weight:600; margin-top:12px;">
+توجه داشته باشید مبلغ بصورت حدودی می‌باشد و ممکن است دارای تفاوت قیمت جزئی هنگام ثبت مدارک باشد
+</div>
+`;
+
+  let d="";
+if(t==="refah") d=`مدارک مورد نیاز:<br>
+• فیش حقوقی<br>
+• کارت ملی<br>
+• شناسنامه<br>
+• داشتن حساب بانک ملی<br>
+• داشتن حساب بلوبانک<br>
+• نداشتن چک برگشتی یا معوقه بانکی:
+<a href="https://etebaritoapp.nics24.ir/login" target="_blank"
+   class="dynamic-link blue-link">
+   استعلام‌گیری: etebaritoapp.nics24.ir/login
+</a><br>
+• برای فهمیدن حداکثر مبلغ اقساط برای هرماه که به حقوق شما تعلق میگیرد وارد لینک زیر شوید (فیلتر شکن خاموش) و پس از وارد کردن کد ملی و شماره تماس در قسمت طرح الماس سقف مبلغ معلوم میشود<br>
+
+<div style="text-align:center; margin-top:10px;">
+  <a href="https://beta.refah-bank.ir/" target="_blank"
+     class="dynamic-link pink-link">
+    سامانه بتا https://beta.refah-bank.ir/
+  </a>
+</div>
+
+<style>
+.dynamic-link{
+  font-weight:600;
+  font-size:14px;
+  text-decoration:none;
+  display:inline-block;
+  transition: transform 0.2s ease;
+}
+.dynamic-link:hover,
+.dynamic-link:active{
+  transform: scale(1.15);
+}
+.pink-link{ color:#ff6ec7; }
+.blue-link{ color:#1e88e5; }
+</style>`;
+  else if(t==="hekmat") d="مدارک مورد نیاز:<br>• کارت ملی<br>• حکمت کارت<br>• آخرین فیش حقوقی با مهر<br>•حداکثر مبلغ اقساط هرماه نصف حقوق دریافتی میباشد<br>• (بجز بازنشتگان) سفته<br>•نداشتن چک برگشتی یا معوقه بانکی: <a href='https://etebaritoapp.nics24.ir/login' target='_blank' class='dynamic-link blue-link'>استعلام‌گیری: etebaritoapp.nics24.ir/login</a><br><span style='color:#c62828; display:block; text-align:center; font-weight:600;'>فیلترشکن خاموش شود</span>";
+
+else if(t==="edu") d="مدارک مورد نیاز:<br>• شناسنامه<br>• کارت ملی<br>• آخرین فیش حقوقی<br>• حساب بانک ملی<br>• حداکثر مبلغ اقساط هرماه نصف حقوق دریافتی میباشد<br>• نداشتن چک برگشتی یا معوقه بانکی: <a href='https://etebaritoapp.nics24.ir/login' target='_blank' class='dynamic-link blue-link'>استعلام‌گیری: etebaritoapp.nics24.ir/login</a><br><span style='color:#c62828; display:block; text-align:center; font-weight:600;'>فیلترشکن خاموش شود</span>";
+  else if(t==="sayad") d="مدارک مورد نیاز:<br>• کارت ملی<br>• دارای بیمه دولتی<br>• نداشتن چک برگشتی یا معوقه بانکی: <a href='https://etebaritoapp.nics24.ir/login' target='_blank' class='dynamic-link blue-link'>استعلام‌گیری: etebaritoapp.nics24.ir/login</a><br><span style='color:#c62828; display:block; text-align:center; font-weight:600;'>فیلترشکن خاموش شود</span>";
+
+  else if(t==="Avand") d=`مدارک مورد نیاز:<br>• کارت ملی<br>•آوند کارت<br>•  نداشتن چک برگشی و معوقه بانکی <br>• <a class="blueLink" href="https://etebaritoapp.nics24.ir/login" target="_blank">https://etebaritoapp.nics24.ir/login</a> <br><b>برای باز شدن لینک اعتبار سنجی فیلترشکن خاموش شود</b>`;
+  
+  docs.innerHTML=d;
+}
+</script>
+</body>
+</html>
+
